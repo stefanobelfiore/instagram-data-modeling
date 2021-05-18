@@ -1,6 +1,6 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -8,26 +8,58 @@ from eralchemy import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+class User(Base):
+    __tablename__ = 'User'
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    name = Column(String)
+    mail = Column(String, unique = True)
+    password = Column(String)
+    bio = Column(String, nullable = True)
 
-    def to_dict(self):
-        return {}
+
+class Post(Base):
+    __tablename__ = 'Post'
+
+    Post_id = Column(Integer, primary_key=True)
+    
+    User_id = Column(Integer, ForeignKey('User.id'))
+    Description = Column(String, nullable = True)
+
+
+class Media(Base):
+    __tablename__ = 'Media'
+    
+    Media_id = Column(Integer, primary_key=True)
+    Post_id = Column(Integer, ForeignKey('Post.Post_id'))
+    Source_Media = Column(String)
+    Type_Media = Column(Enum)       ##preguntar por enum si es por tipo de formato del file
+
+    
+    
+
+class Comment(Base):
+    __tablename__ = 'Comment'
+    
+    Comment_id = Column(Integer, primary_key=True)
+    Post_id = Column(Integer, ForeignKey('Post.Post_id'))
+    User_id = Column(Integer, ForeignKey('User.id'))
+    Comment = Column(String)
+
+
+
+
+class Followers(Base):
+    __tablename__ = 'Followers'
+    
+    Followers_id = Column(Integer, primary_key=True)
+    User_From_id = Column(Integer, ForeignKey('User.id'))
+    User_To_id = Column(Integer, ForeignKey('User.id'))
+    
+
+
+
+
 
 ## Draw from SQLAlchemy base
 try:
